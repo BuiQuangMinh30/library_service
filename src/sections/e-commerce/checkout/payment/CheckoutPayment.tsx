@@ -1,9 +1,13 @@
+import * as React from 'react';
 import * as Yup from 'yup';
 // form
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
-import { Grid, Button } from '@mui/material';
+import { Grid, Button, Typography } from '@mui/material';
+import Stack from '@mui/material/Stack';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import { LoadingButton } from '@mui/lab';
 // @types
 import {
@@ -14,13 +18,15 @@ import {
 } from '../../../../@types/books';
 // components
 import Iconify from '../../../../components/iconify';
+import { useSnackbar } from '../../../../components/snackbar';
 import FormProvider from '../../../../components/hook-form';
 //
 import CheckoutSummary from '../CheckoutSummary';
 import CheckoutDelivery from './CheckoutDelivery';
 import CheckoutBillingInfo from './CheckoutBillingInfo';
 import CheckoutPaymentMethods from './CheckoutPaymentMethods';
-
+import axios from 'axios';
+import { useAuthContext } from '../../../../auth/useAuthContext';
 // ----------------------------------------------------------------------
 
 const DELIVERY_OPTIONS: ICheckoutDeliveryOption[] = [
@@ -76,7 +82,9 @@ type FormValuesProps = {
   delivery: number;
   payment: string;
 };
-
+const Alert = React.forwardRef(function Alert(props: any, ref: any) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 export default function CheckoutPayment({
   checkout,
   onReset,
@@ -85,7 +93,22 @@ export default function CheckoutPayment({
   onGotoStep,
   onApplyShipping,
 }: Props) {
-  const { cart, totalPrice, totalBorrow, discount, subtotalPrice, subtotalBorrow } = checkout;
+  const { cart, totalPrice, totalBorrow, discount, subtotalPrice, subtotalBorrow, billing } = checkout;
+  const accessToken: any = typeof window !== 'undefined' ? localStorage.getItem('access_Token') : '';
+  const { user } = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
+
+
+  // export default function CustomizedSnackbars() {
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = (event: any, reason: any) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   const PaymentSchema = Yup.object().shape({
     payment: Yup.string().required('Payment is required!'),
@@ -108,8 +131,56 @@ export default function CheckoutPayment({
 
   const onSubmit = async () => {
     try {
-      onNextStep();
-      onReset();
+      const data1 = await axios.post(`http://localhost:8080/api/orders/add?userId=${user?.id}`,
+        {
+          fullName: billing?.fullName,
+          email: billing?.email,
+          phoneNumber: billing?.phoneNumber,
+          address: billing?.address,
+          status: 'PROCESSING',
+          totalDeposit: subtotalPrice,
+          totalRent: subtotalBorrow
+
+        }, {
+        headers: {
+          "Authorization": "Bearer " + accessToken
+        }
+      });
+
+      if (data1.status == 200) {
+        if (cart.length > 0) {
+          for (var i = 0; i < cart.length; i++) {
+            const data11 = await axios.post(`http://localhost:8080/api/order_items/add?orderId=${data1.data.orderId}&bookId=` + cart[i].id, {
+
+              quantity: cart[i].quantity,
+              borrowedAt: new Date(cart[i].borrow_At),
+              returnedAt: new Date(cart[i].return_At),
+
+            }, {
+              headers: {
+                "Authorization": "Bearer " + accessToken
+              }
+            })
+            console.log(data11)
+            if (data11.data == "Store doesn't have enough book! Please decrease your Borrow Book!") {
+
+              // handleClick()
+              // setOpen(true);
+              // enqueueSnackbar(`${data11.data}`);
+            } else {
+              onNextStep()
+              onReset()
+            }
+            // if (data11.status == 200) {
+            //   onNextStep()
+            //   onReset()
+            // } else {
+            //   enqueueSnackbar(`${data11.data}`);
+            // }
+          }
+        }
+
+      }
     } catch (error) {
       console.error(error);
     }
@@ -138,14 +209,18 @@ export default function CheckoutPayment({
         </Grid>
 
         <Grid item xs={12} md={4}>
-          {/* <CheckoutSummary
-            enableEdit
+          <CheckoutSummary enableDiscount
             total={totalBorrow}
             discount={discount}
+            deposittoal={subtotalPrice}
             subtotal={subtotalBorrow}
-            onEdit={() => onGotoStep(0)}
-          /> */}
-
+          />
+          {open &&
+            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity="warning" sx={{ width: '100%' }}>
+                <Typography> Store doesn't have enough book! Please decrease your Borrow Book! 123</Typography>
+              </Alert>
+            </Snackbar>}
           <LoadingButton
             fullWidth
             size="large"
@@ -153,10 +228,12 @@ export default function CheckoutPayment({
             variant="contained"
             loading={isSubmitting}
           >
-            Complete Order
+            Hoàn tất đăng ký
           </LoadingButton>
         </Grid>
       </Grid>
+
+
     </FormProvider>
   );
 }

@@ -84,7 +84,7 @@ export default function AccountPopover() {
                     }),
                 }}
             >
-                <CustomAvatar src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoB52AcMxK-13Nyzcy71M4bj66tetJxvE54A&usqp=CAU"} alt={user?.displayName} name={user?.displayName} />
+                <CustomAvatar src={user?.avatar} alt={user?.displayName} name={user?.displayName} />
             </IconButtonAnimate>
 
             <MenuPopover open={openPopover} onClose={handleClosePopover} sx={{ width: 200, p: 0 }}>

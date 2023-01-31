@@ -54,6 +54,7 @@ export default function EcommerceCheckoutPage() {
     const { checkout } = useSelector((state) => state.book);
 
     const { cart, billing, activeStep } = checkout;
+    console.log(billing)
 
     const completed = activeStep === STEPS.length;
 
@@ -85,7 +86,7 @@ export default function EcommerceCheckoutPage() {
         }
     };
 
-    const handleDeleteCart = (productId: string) => {
+    const handleDeleteCart = (productId: any) => {
         dispatch(deleteCart(productId));
     };
 
@@ -156,6 +157,7 @@ export default function EcommerceCheckoutPage() {
                             <CheckoutBillingAddress
                                 accessToken={accessToken}
                                 checkout={checkout}
+                                onNextStep={handleNextStep}
                                 onBackStep={handleBackStep}
                                 onCreateBilling={handleCreateBilling}
                             />

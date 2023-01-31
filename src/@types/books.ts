@@ -57,11 +57,11 @@ export type ICheckoutCartItem = {
 };
 
 export type ICheckoutBillingAddress = {
-  receiver: string;
-  phone: string;
-  fullAddress: string;
-  addressType: string;
-  isDefault: boolean;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  status: string;
 };
 
 export type ICheckoutDeliveryOption = {

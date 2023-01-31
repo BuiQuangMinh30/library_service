@@ -1,3 +1,4 @@
+import { useState } from 'react'
 // form
 import { Controller, useFormContext } from 'react-hook-form';
 // @mui
@@ -12,28 +13,81 @@ import {
   CardHeader,
   CardContent,
   FormControlLabel,
+  Button,
 } from '@mui/material';
 // @types
 import { ICheckoutDeliveryOption } from '../../../../@types/product';
 // components
 import Iconify from '../../../../components/iconify';
 
+import {
+  PayPalScriptProvider,
+  PayPalHostedFieldsProvider,
+  PayPalHostedField,
+  PayPalButtons,
+  usePayPalHostedFields,
+} from "@paypal/react-paypal-js";
 // ----------------------------------------------------------------------
 
 interface Props extends CardProps {
   deliveryOptions: ICheckoutDeliveryOption[];
   onApplyShipping: (shipping: number) => void;
 }
+const SubmitPayment = () => {
+  // Here declare the variable containing the hostedField instance
+  const hostedFields = usePayPalHostedFields();
 
+
+};
 export default function CheckoutDelivery({ deliveryOptions, onApplyShipping, ...other }: Props) {
   const { control } = useFormContext();
+  const [show, setShow] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [ErrorMessage, setErrorMessage] = useState("");
+  const [orderID, setOrderID] = useState(false);
 
+  // creates a paypal order
+  const createOrder = (data: any, actions: any) => {
+    return actions.order
+      .create({
+        purchase_units: [
+          {
+            description: "Sunflower",
+            amount: {
+              currency_code: "USD",
+              value: 100,
+            },
+          },
+        ],
+        // not needed if a shipping address is actually needed
+        application_context: {
+          shipping_preference: "NO_SHIPPING",
+        },
+      })
+      .then((orderID: any) => {
+        setOrderID(orderID);
+        return orderID;
+      });
+  };
+
+  // check Approval
+  const onApprove = (data: any, actions: any) => {
+    return actions.order.capture().then(function (details: any) {
+      const { payer } = details;
+      setSuccess(true);
+    });
+  };
+  //capture likely error
+  const onError = (data: any, actions: any) => {
+    setErrorMessage("An Error occured with your payment ");
+  };
   return (
     <Card {...other}>
       <CardHeader title="Delivery options" />
 
-      <CardContent>
-        <Controller
+      {/* <CardContent> */}
+
+      {/* <Controller
           name="delivery"
           control={control}
           render={({ field }) => (
@@ -53,7 +107,8 @@ export default function CheckoutDelivery({ deliveryOptions, onApplyShipping, ...
                   sm: 'repeat(2, 1fr)',
                 }}
               >
-                {deliveryOptions.map((option) => (
+            
+              {deliveryOptions.map((option) => (
                   <DeliveryOption
                     key={option.value}
                     option={option}
@@ -63,8 +118,19 @@ export default function CheckoutDelivery({ deliveryOptions, onApplyShipping, ...
               </Box>
             </RadioGroup>
           )}
+        /> */}
+      {/* </CardContent> */}
+      <PayPalScriptProvider
+        options={{
+          "client-id": "AaRTEM6WAhaRMH_90zLF6-NWPurmwTscLrkjplrnSPuEBO_Wy2jQ0TaIctf2feIF9k5L7ikQokShpdh6",
+        }}
+      >
+        <PayPalButtons
+          style={{ layout: "horizontal" }}
+          createOrder={createOrder}
+          onApprove={onApprove}
         />
-      </CardContent>
+      </PayPalScriptProvider>
     </Card>
   );
 }

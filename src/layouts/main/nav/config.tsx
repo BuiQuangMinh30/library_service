@@ -59,6 +59,11 @@ const navConfig = [
     path: PATH_PAGE.about,
   },
   {
+    title: 'Profile',
+    icon: <Iconify icon="mdi:account" />,
+    path: PATH_PAGE.profile,
+  },
+  {
     title: 'Thue Sach',
     icon: <Iconify icon="eva:book-open-fill" />,
     path: PATH_PAGE.rental,

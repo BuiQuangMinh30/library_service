@@ -113,6 +113,7 @@ export const ListPage = Loadable(lazy(() => import('../pages/ListPage')));
 export const DetailBook = Loadable(lazy(() => import('../pages/DetailBook')));
 export const RentalBook = Loadable(lazy(() => import('../pages/RentalBook')));
 export const LoginPage1 = Loadable(lazy(() => import('../pages/LoginPage1')));
+export const Profile = Loadable(lazy(() => import('../pages/Profile')));
 // export const BookPostsPage = Loadable(lazy(() => import('../sections/list/BookPostsPage')));
 
 // DEMO COMPONENTS

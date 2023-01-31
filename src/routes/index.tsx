@@ -73,6 +73,7 @@ import {
   ListPage,
   DetailBook,
   RentalBook,
+  Profile,
   LoginPage1,
   //
   ComponentsOverviewPage,
@@ -226,6 +227,7 @@ export default function Router() {
         { path: 'contact-us', element: <Contact /> },
         { path: 'faqs', element: <FaqsPage /> },
         { path: 'thue-sach', element: <RentalBook /> },
+        { path: 'profile', element: <Profile /> },
         // Demo Components
         {
           path: 'danh-muc',

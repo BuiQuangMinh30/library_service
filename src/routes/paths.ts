@@ -42,13 +42,8 @@ export const PATH_PAGE = {
   danhmuc: '/danh-muc',
   trangchu: '/',
   rental: 'thue-sach',
+  profile: '/profile',
   bookdetail: (name: string) => `/sach-chi-tiet/${name}`,
-
-  // (name: string) => path(ROOTS_DASHBOARD, `/chat/${name}`),
-  // danhmuc: {
-  //   root: '/danh-muc',
-  //   detail: (id: string) => `/danh-muc/${id}`,
-  // },
 };
 
 export const PATH_DASHBOARD = {

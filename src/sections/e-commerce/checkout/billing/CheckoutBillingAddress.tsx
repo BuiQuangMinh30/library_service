@@ -20,33 +20,37 @@ import FormProvider, {
 import CheckoutSummary from '../CheckoutSummary';
 import CheckoutBillingNewAddressForm from './CheckoutBillingNewAddressForm';
 import axios from 'axios';
-
+import { useSnackbar } from '../../../../components/snackbar';
 import { useAuthContext } from '../../../../auth/useAuthContext';
 import { useDispatch, useSelector } from '../../../../redux/store';
 import {
   nextStep,
 } from '../../../../redux/slices/book';
+
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 // ----------------------------------------------------------------------
 interface FormValuesProps extends ICheckoutBillingAddress {
   address: string;
-  city: string;
-  state: string;
-  country: string;
-  zipcode: string;
-  fullname: string;
+  phoneNumber: string;
   email: string;
+  fullName: string;
+  status: string;
 }
 
 type Props = {
   checkout: IProductCheckoutState;
   onBackStep: VoidFunction;
+  onNextStep: VoidFunction;
   onCreateBilling: (address: ICheckoutBillingAddress) => void;
   accessToken: string
 };
 
-export default function CheckoutBillingAddress({ onBackStep, onCreateBilling, checkout, accessToken }: Props) {
+export default function CheckoutBillingAddress({ onBackStep, onNextStep, onCreateBilling, checkout, accessToken }: Props) {
   const { cart, totalPrice, totalBorrow, discount, subtotalPrice, subtotalBorrow } = checkout;
   const { user } = useAuthContext();
+
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
@@ -61,15 +65,15 @@ export default function CheckoutBillingAddress({ onBackStep, onCreateBilling, ch
   };
 
   const NewAddressSchema = Yup.object().shape({
-    fullname: Yup.string().required('Fullname is required'),
-    phone: Yup.string().required('Phone is required'),
+    fullName: Yup.string().required('Fullname is required'),
+    phoneNumber: Yup.string().required('Phone is required'),
     address: Yup.string().required('Address is required'),
     email: Yup.string().required('Email is required'),
   });
 
   const defaultValues = {
-    fullname: user?.username ? user?.username : '',
-    phone: user?.phone ? user?.phone : '',
+    fullName: user?.name ? user?.name : '',
+    phoneNumber: user?.phoneNumber ? user?.phoneNumber : '',
     address: user?.address ? user?.address : '',
     email: user?.email ? user?.email : '',
   };
@@ -85,52 +89,70 @@ export default function CheckoutBillingAddress({ onBackStep, onCreateBilling, ch
     formState: { isSubmitting },
   } = methods;
 
+  // const onSubmit = async (data: FormValuesProps) => {
+  //   try {
+  //     const data1 = await axios.post(`http://localhost:8080/api/orders/add?userId=${user?.id}`,
+  //       {
+  //         fullName: data?.fullName,
+  //         email: data?.email,
+  //         phoneNumber: data?.phoneNumber,
+  //         address: data?.address,
+  //         status: 'PROCESSING'
+
+  //       }, {
+  //       headers: {
+  //         "Authorization": "Bearer " + accessToken
+  //       }
+  //     });
+
+  //     if (data1.status == 200) {
+  //       if (cart.length > 0) {
+  //         for (var i = 0; i < cart.length; i++) {
+  //           const data11 = await axios.post(`http://localhost:8080/api/order_items/add?orderId=${data1.data.orderId}&bookId=` + cart[i].id, {
+
+  //             quantity: cart[i].quantity,
+  //             borrowedAt: new Date(cart[i].borrow_At),
+  //             returnedAt: new Date(cart[i].return_At),
+
+  //           }, {
+  //             headers: {
+  //               "Authorization": "Bearer " + accessToken
+  //             }
+  //           })
+  //           // if (data11.data == "Store doesn't have enough book! Please decrease your Borrow Book!") {
+  //           //   enqueueSnackbar(`${data11.data}`);
+  //           // } else {
+  //           //   dispatch(nextStep());
+  //           // }
+
+  //           if (data11.status == 200) {
+  //             dispatch(nextStep());
+  //           }
+  //         }
+  //       }
+
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      const data1 = await axios.post(`http://localhost:8080/api/orders/add?userId=${user?.id}`,
-        {
-          fullName: data?.fullname,
-          email: data?.email,
-          phoneNumber: data?.phone,
-          address: data?.address,
-
-        }, {
-        headers: {
-          "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNaW5oIiwicm9sZXMiOlsiQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2FwaS9sb2dpbiIsImV4cCI6MTY3MzQ5MTkyMH0.t2_HLAydbQ0vPspK4MLp-qw-jpvb6XuVDsRrfkfYRn4"
-        }
+      onCreateBilling({
+        fullName: data?.fullName,
+        email: data?.email,
+        phoneNumber: data?.phoneNumber,
+        address: data?.address,
+        status: 'PROCESSING'
       });
-
-      if (data1.status == 200) {
-        if (cart.length > 0) {
-          for (var i = 0; i < cart.length; i++) {
-            const data11 = await axios.post(`http://localhost:8080/api/order_items/add?orderId=${data1.data.orderId}&bookId=` + cart[i].id, {
-
-              quantity: cart[i].quantity,
-              borrowedAt: new Date(cart[i].borrow_At),
-              returnedAt: new Date(cart[i].return_At),
-
-            }, {
-              headers: {
-                "Authorization": "Bearer " + accessToken
-              }
-            })
-
-            if (data1.status == 200) {
-              dispatch(nextStep());
-            }
-          }
-        }
-
-      }
+      // dispatch(nextStep());
     } catch (error) {
       console.error(error);
     }
   };
-
   return (
     <>
       <Grid container spacing={3}>
-        {/* <Button onSubmit={isSubmit}>123</Button> */}
         <Grid item xs={12} md={8}>
           <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={3}>
@@ -158,7 +180,7 @@ export default function CheckoutBillingAddress({ onBackStep, onCreateBilling, ch
                   sm: 'repeat(2, 1fr)',
                 }}
               >
-                <RHFTextField name="phone" label="Phone Number" defaultValue={user?.phoneNumber} />
+                <RHFTextField name="phoneNumber" label="Phone Number" defaultValue={user?.phoneNumber} />
                 <RHFTextField name="address" label="Address" defaultValue={user?.address} />
 
               </Box>
@@ -197,14 +219,16 @@ export default function CheckoutBillingAddress({ onBackStep, onCreateBilling, ch
             subtotal={subtotalBorrow}
           />
 
+
+
         </Grid>
       </Grid>
 
-      <CheckoutBillingNewAddressForm
+      {/* <CheckoutBillingNewAddressForm
         open={open}
         onClose={handleClose}
         onCreateBilling={onCreateBilling}
-      />
+      /> */}
     </>
   );
 }
