@@ -103,21 +103,26 @@ function BookingItem({ item }: BookingItemProps) {
 
     return (
         <Paper sx={{ mx: 1.5, borderRadius: 2, bgcolor: 'background.neutral' }}>
+
+
+            <Box sx={{ p: 1, position: 'relative' }}>
+                {/* <Label
+                    variant="filled"
+                    color={(roomType === 'king' && 'error') || (roomType === 'double' && 'info') || 'warning'}
+                    sx={{
+                        right: 16,
+                        zIndex: 9,
+                        bottom: 16,
+                        position: 'absolute',
+                    }}
+                >
+                    {roomType}
+                </Label> */}
+
+                <Image alt="cover" src={cover} ratio="1/1" sx={{ borderRadius: 1.5 }} />
+            </Box>
             <Stack spacing={2.5} sx={{ p: 3, pb: 2.5 }}>
-                <Stack direction="row" alignItems="center" spacing={2}>
-                    <Avatar alt={name} src={avatar} />
 
-                    <div>
-                        <Typography variant="subtitle2">{name}</Typography>
-
-                        <Typography
-                            variant="caption"
-                            sx={{ color: 'text.disabled', mt: 0.5, display: 'block' }}
-                        >
-                            {fDateTime(bookdAt)}
-                        </Typography>
-                    </div>
-                </Stack>
 
                 <Stack direction="row" alignItems="center" spacing={3} sx={{ color: 'text.secondary' }}>
                     <Stack direction="row" alignItems="center" spacing={1}>
@@ -130,24 +135,20 @@ function BookingItem({ item }: BookingItemProps) {
                         <Typography variant="caption">{person} Person</Typography>
                     </Stack>
                 </Stack>
+                {/* <Stack direction="row" alignItems="center" spacing={2}>
+
+                    <div>
+                        <Typography variant="subtitle2">{name}</Typography>
+
+                        <Typography
+                            variant="caption"
+                            sx={{ color: 'text.disabled', mt: 0.5, display: 'block' }}
+                        >
+                            {fDateTime(bookdAt)}
+                        </Typography>
+                    </div>
+                </Stack> */}
             </Stack>
-
-            <Box sx={{ p: 1, position: 'relative' }}>
-                <Label
-                    variant="filled"
-                    color={(roomType === 'king' && 'error') || (roomType === 'double' && 'info') || 'warning'}
-                    sx={{
-                        right: 16,
-                        zIndex: 9,
-                        bottom: 16,
-                        position: 'absolute',
-                    }}
-                >
-                    {roomType}
-                </Label>
-
-                <Image alt="cover" src={cover} ratio="1/1" sx={{ borderRadius: 1.5 }} />
-            </Box>
         </Paper>
     );
 }

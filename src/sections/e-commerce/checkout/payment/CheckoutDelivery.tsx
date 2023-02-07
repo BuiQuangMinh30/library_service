@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 // form
 import { Controller, useFormContext } from 'react-hook-form';
 // @mui
@@ -81,6 +81,15 @@ export default function CheckoutDelivery({ deliveryOptions, onApplyShipping, ...
   const onError = (data: any, actions: any) => {
     setErrorMessage("An Error occured with your payment ");
   };
+
+
+  useEffect(() => {
+    if (success) {
+      alert("Payment successful!!");
+    }
+  },
+    [success]
+  );
   return (
     <Card {...other}>
       <CardHeader title="Delivery options" />

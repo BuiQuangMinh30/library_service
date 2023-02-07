@@ -27,21 +27,8 @@ import CheckoutBillingInfo from './CheckoutBillingInfo';
 import CheckoutPaymentMethods from './CheckoutPaymentMethods';
 import axios from 'axios';
 import { useAuthContext } from '../../../../auth/useAuthContext';
+import sum from 'lodash/sum';
 // ----------------------------------------------------------------------
-
-const DELIVERY_OPTIONS: ICheckoutDeliveryOption[] = [
-  {
-    value: 0,
-    title: 'Standard delivery (Free)',
-    description: 'Delivered on Monday, August 12',
-  },
-  {
-    value: 2,
-    title: 'Fast delivery ($2,00)',
-    description: 'Delivered on Monday, August 5',
-  },
-];
-
 const PAYMENT_OPTIONS: ICheckoutPaymentOption[] = [
   {
     value: 'paypal',
@@ -49,16 +36,16 @@ const PAYMENT_OPTIONS: ICheckoutPaymentOption[] = [
     description: 'You will be redirected to PayPal website to complete your purchase securely.',
     icons: ['/assets/icons/payments/ic_paypal.svg'],
   },
-  {
-    value: 'credit_card',
-    title: 'Credit / Debit Card',
-    description: 'We support Mastercard, Visa, Discover and Stripe.',
-    icons: ['/assets/icons/payments/ic_mastercard.svg', '/assets/icons/payments/ic_visa.svg'],
-  },
+  // {
+  //   value: 'credit_card',
+  //   title: 'Credit / Debit Card',
+  //   description: 'We support Mastercard, Visa, Discover and Stripe.',
+  //   icons: ['/assets/icons/payments/ic_mastercard.svg', '/assets/icons/payments/ic_visa.svg'],
+  // },
   {
     value: 'cash',
-    title: 'Cash on CheckoutDelivery',
-    description: 'Pay with cash when your order is delivered.',
+    title: 'Thanh toán qua ví tiền.',
+    description: 'Thanh toán trực tiếp qua ví tiền.',
     icons: [],
   },
 ];
@@ -94,12 +81,12 @@ export default function CheckoutPayment({
   onApplyShipping,
 }: Props) {
   const { cart, totalPrice, totalBorrow, discount, subtotalPrice, subtotalBorrow, billing } = checkout;
+  const totalItems = sum(cart.map((item) => item.quantity));
+  // console.log(payment)
   const accessToken: any = typeof window !== 'undefined' ? localStorage.getItem('access_Token') : '';
   const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
 
-
-  // export default function CustomizedSnackbars() {
   const [open, setOpen] = React.useState(false);
 
   const handleClose = (event: any, reason: any) => {
@@ -161,22 +148,21 @@ export default function CheckoutPayment({
                 "Authorization": "Bearer " + accessToken
               }
             })
-            console.log(data11)
             if (data11.data == "Store doesn't have enough book! Please decrease your Borrow Book!") {
-
-              // handleClick()
-              // setOpen(true);
-              // enqueueSnackbar(`${data11.data}`);
+              enqueueSnackbar(`${data11.data}`, { variant: 'error' });
             } else {
-              onNextStep()
-              onReset()
+              const data = await axios.get(`http://localhost:8080/api/orders/checkout-success?orderID=${data1.data.orderId}`, {
+                headers: {
+                  "Authorization": "Bearer " + accessToken
+                }
+              })
+              if (data.status == 200) {
+                onNextStep()
+                onReset()
+              }
+
             }
-            // if (data11.status == 200) {
-            //   onNextStep()
-            //   onReset()
-            // } else {
-            //   enqueueSnackbar(`${data11.data}`);
-            // }
+
           }
         }
 
@@ -190,11 +176,15 @@ export default function CheckoutPayment({
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={8}>
-          <CheckoutDelivery onApplyShipping={onApplyShipping} deliveryOptions={DELIVERY_OPTIONS} />
+          {/* <CheckoutDelivery onApplyShipping={onApplyShipping} deliveryOptions={DELIVERY_OPTIONS} /> */}
 
           <CheckoutPaymentMethods
+            checkout={checkout}
             cardOptions={CARDS_OPTIONS}
             paymentOptions={PAYMENT_OPTIONS}
+            onSubmit={onSubmit}
+            onReset={onReset}
+            onNextStep={onNextStep}
             sx={{ my: 3 }}
           />
 
@@ -210,6 +200,7 @@ export default function CheckoutPayment({
 
         <Grid item xs={12} md={4}>
           <CheckoutSummary enableDiscount
+            totalItems={totalItems}
             total={totalBorrow}
             discount={discount}
             deposittoal={subtotalPrice}

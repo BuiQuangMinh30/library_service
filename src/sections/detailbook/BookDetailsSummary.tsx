@@ -16,11 +16,13 @@ import { fShortenNumber, fCurrency } from '../../utils/formatNumber';
 import { IBook, ICheckoutCartItem } from '../../@types/books';
 // _mock
 import { _socials } from '../../_mock/arrays';
+
 // components
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import { IncrementerButton } from '../../components/custom-input';
 import FormProvider, { RHFSelect } from '../../components/hook-form';
+import { useSnackbar } from '../../components/snackbar';
 
 import TextField from '@mui/material/TextField';
 import { DatePicker } from '@mui/x-date-pickers';
@@ -44,9 +46,13 @@ export default function ProductDetailsSummary({
     ...other
 }: Props) {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
+
     const now = new Date();
+    var tomorrow = new Date(now);
+    tomorrow.setDate(now.getDate() + 1);
     const [edit_check_date, set_edit_check_date] = useState<Date | null>(new Date());
-    const [edit_return_date, set_edit_return_date] = useState<Date | null>(new Date());
+    const [edit_return_date, set_edit_return_date] = useState<Date | null>(tomorrow);
     const [countDate1, setCountDate] = useState<number>()
 
     let dateBorrow1: any = moment(edit_check_date).format("MM/DD/YYYY");
@@ -108,8 +114,8 @@ export default function ProductDetailsSummary({
                 subtotalBorrow: data.borrowPrice * data.quantity * data.countDate * (countDate1 ? countDate1 : 0),
                 subtotalPrice: data.price * data.quantity * data.countDate * (countDate1 ? countDate1 : 0),
             });
+            enqueueSnackbar(`Thêm thành công`);
         } catch (error) {
-            console.error(error);
         }
     };
 
@@ -137,10 +143,10 @@ export default function ProductDetailsSummary({
                     <Typography variant="h5">{detail}</Typography>
 
                     <Typography variant="h6">
-                        Giá sách: {fCurrency(price)}
+                        Giá sách: {fCurrency(price)}đ
                     </Typography>
                     <Typography variant="subtitle2">
-                        Giá thuê sách: {fCurrency(borrowPrice)} / 1 ngày
+                        Giá thuê sách: {fCurrency(borrowPrice)}đ / 1 ngày
                     </Typography>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
@@ -185,8 +191,8 @@ export default function ProductDetailsSummary({
                         <DatePicker
                             label="Ngày trả"
                             value={edit_return_date}
-                            minDate={edit_check_date ? edit_check_date : now}
-                            onChange={(newValue) => {
+                            minDate={edit_return_date ? edit_return_date : tomorrow}
+                            onChange={(newValue: any) => {
                                 set_edit_return_date(newValue)
                             }}
                             renderInput={(params) => (

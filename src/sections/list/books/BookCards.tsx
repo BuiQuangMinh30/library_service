@@ -77,7 +77,7 @@ export default function ShopProductCard({ product }: Props) {
                     </Label>
                 )}
 
-                <Fab
+                {/* <Fab
                     color="warning"
                     size="medium"
                     className="add-cart-btn"
@@ -96,7 +96,7 @@ export default function ShopProductCard({ product }: Props) {
                     }}
                 >
                     <Iconify icon="ic:round-add-shopping-cart" />
-                </Fab>
+                </Fab> */}
 
                 <Image alt={title} src={thumbnail} ratio="1/1" sx={{ borderRadius: 1.5 }} />
             </Box>
@@ -109,13 +109,14 @@ export default function ShopProductCard({ product }: Props) {
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
 
                     <Stack direction="row" spacing={0.5} sx={{ typography: 'subtitle1' }}>
+                        <Box component="span">{fCurrency(price)}đ -</Box>
                         {borrowPrice && (
                             <Box component="span" sx={{ color: 'text.disabled', textDecoration: 'line-through' }}>
-                                {fCurrency(borrowPrice)}
+                                {fCurrency(borrowPrice)}đ
                             </Box>
                         )}
 
-                        <Box component="span">{fCurrency(price)}</Box>
+
                     </Stack>
                 </Stack>
             </Stack>

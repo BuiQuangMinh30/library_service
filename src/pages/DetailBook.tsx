@@ -75,8 +75,6 @@ export default function EcommerceProductDetailsPage() {
     };
     useSelector((state) => state.product);
 
-    const [currentTab, setCurrentTab] = useState('description');
-
     return (
         <>
             <Helmet>

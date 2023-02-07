@@ -36,6 +36,7 @@ export default function CheckoutCart({
 }: Props) {
   const { cart, totalPrice, totalBorrow, discount, subtotalPrice, subtotalBorrow } = checkout;
 
+
   const totalItems = sum(cart.map((item) => item.quantity));
 
   const isEmptyCart = !cart.length;
@@ -85,6 +86,7 @@ export default function CheckoutCart({
       <Grid item xs={12} md={3}>
         <CheckoutSummary
           enableDiscount
+          totalItems={totalItems}
           total={totalBorrow}
           discount={discount}
           subtotal={subtotalBorrow}
@@ -92,6 +94,9 @@ export default function CheckoutCart({
           onApplyDiscount={onApplyDiscount}
         />
         <Button
+          sx={{
+            marginBottom: 4
+          }}
           fullWidth
           size="large"
           type="submit"

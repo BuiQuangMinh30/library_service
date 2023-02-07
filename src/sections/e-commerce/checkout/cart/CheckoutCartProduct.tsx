@@ -61,6 +61,7 @@ export default function CheckoutCartProduct({
 
       <TableCell align="left">
         <DatePicker
+          disabled
           label="Ngày thuê"
           minDate={now}
           value={edit_check_date}
@@ -77,6 +78,7 @@ export default function CheckoutCartProduct({
       <TableCell align="left">
 
         <DatePicker
+          disabled
           label="Ngày trả"
           minDate={now}
           value={edit_return_date}

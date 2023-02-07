@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { paramCase } from 'change-case';
+import { useParams } from 'react-router-dom';
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import { useNavigate } from 'react-router-dom';
@@ -18,27 +19,51 @@ import { CustomTextField } from '../../../components/custom-input';
 import SearchNotFound from '../../../components/search-not-found';
 
 // ----------------------------------------------------------------------
-
-export default function ShopProductSearch() {
+type Props = {
+    books: any
+}
+export default function ShopProductSearch({ books }: Props) {
     const navigate = useNavigate();
+    const { id } = useParams()
 
     const [searchProducts, setSearchProducts] = useState('');
 
-    const [searchResults, setSearchResults] = useState([]);
+    const [searchResults, setSearchResults] = useState<any | undefined>(books);
 
-    const handleChangeSearch = async (value: string) => {
-        try {
-            setSearchProducts(value);
-            if (value) {
-                const response = await axios.get('/api/products/search', {
-                    params: { query: value },
-                });
+    // http://localhost:8080/api/books/cateID-search?cateID=8&keyword=gold
+    // const handleChangeSearch = async (value: string) => {
+    //     try {
+    //         setSearchProducts(value);
+    //         if (value) {
+    //             const response = await axios.get(`http://localhost:8080/api/books/cateID-search?cateID=${id}&keyword=${value}`, {
+    //                 headers: { 'Content-Type': 'application/json' },
+    //             });
+    //             console.log('response', response)
 
-                setSearchResults(response.data.results);
-            }
-        } catch (error) {
-            console.error(error);
-        }
+    //             setSearchResults(response.data.results);
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // };
+    console.log('books', books)
+
+    const [filteredList, setFilteredList] = useState<any | undefined>(books);
+
+    const handleChangeSearch = (event: any) => {
+        console.log()
+        // Access input value
+        const query = event;
+        // Create copy of item list
+        var updatedList = [...books];
+        // console.log(updatedList)
+        // Include all elements which includes the search query
+        updatedList = updatedList.filter((item) => {
+            return item.detail.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+        });
+        console.log(updatedList)
+        // Trigger render with updated values
+        setSearchResults(updatedList);
     };
 
     const handleGotoProduct = (name: string) => {

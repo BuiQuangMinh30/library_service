@@ -1,4 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import * as Yup from 'yup';
+// form
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 // form
 import { Controller, useFormContext } from 'react-hook-form';
 // @mui
@@ -26,16 +30,28 @@ import Iconify from '../../../../components/iconify';
 // section
 import { PaymentNewCardDialog } from '../../../payment';
 
+import {
+  PayPalScriptProvider,
+  PayPalButtons,
+} from "@paypal/react-paypal-js";
+import { useAuthContext } from '../../../../auth/useAuthContext';
+import axios from 'axios';
 // ----------------------------------------------------------------------
 
 interface Props extends CardProps {
   paymentOptions: ICheckoutPaymentOption[];
   cardOptions: ICheckoutCardOption[];
+  onSubmit: any;
+  checkout: any;
+  onReset: any;
+  onNextStep: any;
 }
 
-export default function CheckoutPaymentMethods({ paymentOptions, cardOptions, ...other }: Props) {
+export default function CheckoutPaymentMethods({ paymentOptions, cardOptions, checkout, onReset, onNextStep, ...other }: Props) {
+  const { cart, totalPrice, totalBorrow, discount, subtotalPrice, subtotalBorrow, billing } = checkout;
   const { control } = useFormContext();
-
+  const accessToken: any = typeof window !== 'undefined' ? localStorage.getItem('access_Token') : '';
+  const { user } = useAuthContext();
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
@@ -44,6 +60,61 @@ export default function CheckoutPaymentMethods({ paymentOptions, cardOptions, ..
 
   const handleClose = () => {
     setOpen(false);
+  };
+  const onSubmit = async () => {
+    try {
+      const data1 = await axios.post(`http://localhost:8080/api/orders/add?userId=${user?.id}`,
+        {
+          fullName: billing?.fullName,
+          email: billing?.email,
+          phoneNumber: billing?.phoneNumber,
+          address: billing?.address,
+          status: 'PROCESSING',
+          type: "PAYPAL",
+          totalDeposit: subtotalPrice,
+
+        }, {
+        headers: {
+          "Authorization": "Bearer " + accessToken
+        }
+      });
+
+      if (data1.status == 200) {
+        if (cart.length > 0) {
+          for (var i = 0; i < cart.length; i++) {
+            const data11 = await axios.post(`http://localhost:8080/api/order_items/add?orderId=${data1.data.orderId}&bookId=` + cart[i].id, {
+
+              quantity: cart[i].quantity,
+              borrowedAt: new Date(cart[i].borrow_At),
+              returnedAt: new Date(cart[i].return_At),
+
+            }, {
+              headers: {
+                "Authorization": "Bearer " + accessToken
+              }
+            })
+            if (data11.data == "Store doesn't have enough book! Please decrease your Borrow Book!") {
+              // enqueueSnackbar(`${data11.data}`, { variant: 'error' });
+            } else {
+              const data = await axios.get(`http://localhost:8080/api/orders/checkout-success?orderID=${data1.data.orderId}`, {
+                headers: {
+                  "Authorization": "Bearer " + accessToken
+                }
+              })
+              if (data.status == 200) {
+                // onNextStep()
+                onReset()
+              }
+
+            }
+
+          }
+        }
+
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -64,12 +135,16 @@ export default function CheckoutPaymentMethods({ paymentOptions, cardOptions, ..
                         key={option.title}
                         option={option}
                         cardOptions={cardOptions}
-                        hasChild={option.value === 'credit_card'}
+                        hasChild={option.value === 'paypal'}
                         isSelected={field.value === option.value}
                         isCreditMethod={
-                          option.value === 'credit_card' && field.value === 'credit_card'
+                          option.value === 'paypal' && field.value === 'paypal'
                         }
                         onOpen={handleOpen}
+                        onSubmit={onSubmit}
+                        onReset={onReset}
+                        onNextStep={onNextStep}
+                        subtotalBorrow={subtotalBorrow}
                       />
                     ))}
                   </Stack>
@@ -100,6 +175,10 @@ type PaymentOptionProps = {
   isSelected: boolean;
   isCreditMethod: boolean;
   onOpen: VoidFunction;
+  onSubmit: VoidFunction
+  subtotalBorrow: number;
+  onReset: any;
+  onNextStep: any;
 };
 
 function PaymentOption({
@@ -109,9 +188,63 @@ function PaymentOption({
   isSelected,
   isCreditMethod,
   onOpen,
+  onSubmit,
+  subtotalBorrow,
+  onReset,
+  onNextStep,
+
 }: PaymentOptionProps) {
   const { value, title, icons, description } = option;
+  const { control } = useFormContext();
+  const [show, setShow] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [ErrorMessage, setErrorMessage] = useState("");
+  const [orderID, setOrderID] = useState(false);
 
+  // creates a paypal order
+  const createOrder = (data: any, actions: any) => {
+    return actions.order
+      .create({
+        purchase_units: [
+          {
+            intent: "Thuê sách",
+            amount: {
+              currency_code: "USD",
+              value: `${subtotalBorrow}`,
+            },
+          },
+        ],
+      })
+      .then((orderID: any) => {
+        setOrderID(orderID);
+        return orderID;
+      });
+  };
+
+  // check Approval
+  const onApprove = (data: any, actions: any) => {
+    return actions.order.capture().then(function (details: any) {
+      const { payer } = details;
+      setSuccess(true);
+      onSubmit();
+    });
+  };
+  //capture likely error
+  const onError = (data: any, actions: any) => {
+    setErrorMessage("An Error occured with your payment ");
+  };
+
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (success) {
+        onReset();
+        onNextStep();
+      }
+    }, 4000)
+  },
+    [success]
+  );
   return (
     <>
       <Paper
@@ -165,24 +298,26 @@ function PaymentOption({
             sx={{
               px: 3,
               width: 1,
+              my: 3
             }}
           >
-            <TextField select fullWidth label="Cards" SelectProps={{ native: true }}>
-              {cardOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </TextField>
+            <Card sx={{ width: '100%', height: '50px' }}>
+              <PayPalScriptProvider
 
-            <Button
-              size="small"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={onOpen}
-              sx={{ my: 3 }}
-            >
-              Add new card
-            </Button>
+                options={{
+                  "client-id": "AaRTEM6WAhaRMH_90zLF6-NWPurmwTscLrkjplrnSPuEBO_Wy2jQ0TaIctf2feIF9k5L7ikQokShpdh6",
+                  currency: "USD",
+
+                }}
+              >
+                <PayPalButtons
+                  style={{ layout: "horizontal" }}
+                  createOrder={createOrder}
+                  onApprove={onApprove}
+                />
+              </PayPalScriptProvider>
+            </Card>
+
           </Stack>
         )}
       </Paper>

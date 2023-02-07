@@ -30,6 +30,7 @@ type Props = {
   enableEdit?: boolean;
   onApplyDiscount?: (discount: number) => void;
   enableDiscount?: boolean;
+  totalItems: number;
 };
 
 export default function CheckoutSummary({
@@ -41,6 +42,7 @@ export default function CheckoutSummary({
   onApplyDiscount,
   enableEdit = false,
   enableDiscount = false,
+  totalItems
 }: Props) {
   const displayShipping = shipping !== null ? 'Free' : '-';
   // const totalItems = sum(cart.map((item) => item.quantity));
@@ -78,7 +80,7 @@ export default function CheckoutSummary({
               Số lượng sách thuê
             </Typography>
             <Typography variant="subtitle2">
-              {shipping ? fCurrency(shipping) : displayShipping}
+              {totalItems}
             </Typography>
           </Stack>
 

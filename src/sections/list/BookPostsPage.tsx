@@ -5,7 +5,7 @@ import orderBy from 'lodash/orderBy';
 // form
 import { useForm } from 'react-hook-form';
 // @mui
-import { Container, Typography, Stack } from '@mui/material';
+import { Container, Typography, Stack, Input, TextField } from '@mui/material';
 // redux
 import { useDispatch, useSelector } from '../../redux/store';
 // import { getProducts } from '../../redux/slices/product';
@@ -35,12 +35,14 @@ export default function BookPostsPage() {
     const [books, setBooks] = useState([])
     const [loading, setLoading] = useState(false)
     const dispatch = useDispatch();
+    const [filteredList, setFilteredList] = useState<any | undefined>(books);
     useEffect(() => {
         const getAPIData = async () => {
             setLoading(true)
             try {
                 const apiResponse = await axios.get(`http://localhost:8080/api/books/category/${id ? id : 1}`)
                 setBooks(apiResponse.data)
+                setFilteredList(apiResponse.data)
             } catch (error) {
                 console.log('error', error)
             }
@@ -49,6 +51,18 @@ export default function BookPostsPage() {
         setLoading(false)
     }, [id])
 
+    const filterBySearch = (event: any) => {
+        // Access input value
+        const query = event.target.value;
+        // Create copy of item list
+        var updatedList = [...books];
+        // Include all elements which includes the search query
+        updatedList = updatedList.filter((item: any) => {
+            return item?.detail.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+        });
+        // Trigger render with updated values
+        setFilteredList(updatedList);
+    };
 
     const [openFilter, setOpenFilter] = useState(false);
 
@@ -76,7 +90,7 @@ export default function BookPostsPage() {
 
     const values = watch();
 
-    const dataFiltered = applyFilter(books, values);
+    const dataFiltered = applyFilter(filteredList, values);
 
     useEffect(() => {
         dispatch(getProducts());
@@ -108,8 +122,14 @@ export default function BookPostsPage() {
                         justifyContent="space-between"
                         sx={{ mb: 2 }}
                     >
-                        <BookSearch />
-
+                        <Stack>
+                            <TextField
+                                id="filled-search"
+                                label="Tìm kiếm sách"
+                                type="search"
+                                variant="filled"
+                                onChange={filterBySearch} />
+                        </Stack>
                         <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
 
 

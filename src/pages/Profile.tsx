@@ -31,13 +31,17 @@ import {
 
 import AccountBilling from '../sections/profile/billing/AccountBilling'
 import axios from 'axios';
-
+// import Router from 'src/routes';
+// import { Route } from 'react-router';
+import { useNavigate } from "react-router-dom";
 // ----------------------------------------------------------------------
 
 export default function UserProfilePage() {
+    const navigate = useNavigate();
     const { themeStretch } = useSettingsContext();
     const token = localStorage.getItem("access_Token")
     const [profile, setProfile] = useState<Object | any>({});
+    console.log(profile)
     const [loading, setLoading] = useState(false);
     useEffect(() => {
         setLoading(true)
@@ -51,6 +55,11 @@ export default function UserProfilePage() {
     }, [])
 
     const { user } = useAuthContext();
+    useEffect(() => {
+        if (!user) {
+            navigate('/auth/login')
+        }
+    }, [])
 
     const [currentTab, setCurrentTab] = useState('profile');
 

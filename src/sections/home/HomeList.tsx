@@ -80,16 +80,9 @@ export default function HomeList() {
                     display: 'flex',
                     justifyContent: 'center',
                 }}>
-                    <Tabs value={currentTab} onChange={(event, newValue) => setCurrentTab(newValue)} >
-                        {TABS.map((tab) => (
-                            <Tab key={tab.value} label={tab.label} icon={tab.icon} value={tab.value} />
-                        ))}
-                    </Tabs>
                 </Box>
 
-                {/* {TABS.map(
-                    (tab) => tab.value === currentTab && <Box key={tab.value}> {tab.component} </Box>
-                )} */}
+
                 <HomLists />
             </Container>
 

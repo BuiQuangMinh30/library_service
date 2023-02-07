@@ -23,6 +23,7 @@ import axios from 'axios';
 import { useSnackbar } from '../../../../components/snackbar';
 import { useAuthContext } from '../../../../auth/useAuthContext';
 import { useDispatch, useSelector } from '../../../../redux/store';
+import sum from 'lodash/sum';
 import {
   nextStep,
 } from '../../../../redux/slices/book';
@@ -47,10 +48,9 @@ type Props = {
 
 export default function CheckoutBillingAddress({ onBackStep, onNextStep, onCreateBilling, checkout, accessToken }: Props) {
   const { cart, totalPrice, totalBorrow, discount, subtotalPrice, subtotalBorrow } = checkout;
+  const totalItems = sum(cart.map((item) => item.quantity));
   const { user } = useAuthContext();
 
-
-  const { enqueueSnackbar } = useSnackbar();
 
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
@@ -89,53 +89,6 @@ export default function CheckoutBillingAddress({ onBackStep, onNextStep, onCreat
     formState: { isSubmitting },
   } = methods;
 
-  // const onSubmit = async (data: FormValuesProps) => {
-  //   try {
-  //     const data1 = await axios.post(`http://localhost:8080/api/orders/add?userId=${user?.id}`,
-  //       {
-  //         fullName: data?.fullName,
-  //         email: data?.email,
-  //         phoneNumber: data?.phoneNumber,
-  //         address: data?.address,
-  //         status: 'PROCESSING'
-
-  //       }, {
-  //       headers: {
-  //         "Authorization": "Bearer " + accessToken
-  //       }
-  //     });
-
-  //     if (data1.status == 200) {
-  //       if (cart.length > 0) {
-  //         for (var i = 0; i < cart.length; i++) {
-  //           const data11 = await axios.post(`http://localhost:8080/api/order_items/add?orderId=${data1.data.orderId}&bookId=` + cart[i].id, {
-
-  //             quantity: cart[i].quantity,
-  //             borrowedAt: new Date(cart[i].borrow_At),
-  //             returnedAt: new Date(cart[i].return_At),
-
-  //           }, {
-  //             headers: {
-  //               "Authorization": "Bearer " + accessToken
-  //             }
-  //           })
-  //           // if (data11.data == "Store doesn't have enough book! Please decrease your Borrow Book!") {
-  //           //   enqueueSnackbar(`${data11.data}`);
-  //           // } else {
-  //           //   dispatch(nextStep());
-  //           // }
-
-  //           if (data11.status == 200) {
-  //             dispatch(nextStep());
-  //           }
-  //         }
-  //       }
-
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
   const onSubmit = async (data: FormValuesProps) => {
     try {
       onCreateBilling({
@@ -200,19 +153,12 @@ export default function CheckoutBillingAddress({ onBackStep, onNextStep, onCreat
               Back
             </Button>
 
-            <Button
-              size="small"
-              variant="soft"
-              onClick={handleOpen}
-              startIcon={<Iconify icon="eva:plus-fill" />}
-            >
-              Add new address
-            </Button>
           </Stack>
         </Grid>
 
         <Grid item xs={12} md={4}>
           <CheckoutSummary enableDiscount
+            totalItems={totalItems}
             total={totalBorrow}
             discount={discount}
             deposittoal={subtotalPrice}

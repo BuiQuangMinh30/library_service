@@ -54,7 +54,6 @@ export default function EcommerceCheckoutPage() {
     const { checkout } = useSelector((state) => state.book);
 
     const { cart, billing, activeStep } = checkout;
-    console.log(billing)
 
     const completed = activeStep === STEPS.length;
 
