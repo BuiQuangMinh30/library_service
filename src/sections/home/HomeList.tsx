@@ -16,8 +16,12 @@ export default function HomeList() {
 
     useEffect(() => {
         const data = async () => {
-            const res = await axios.get('http://localhost:8080/api/books');
-            console.log(res);
+            const res = await axios.get('http://localhost:8080/api/books', {
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+                }
+            });
             setBookSuccess(res.data)
         }
         data();

@@ -20,7 +20,12 @@ export default function NavVertical() {
         const getAPIData = async () => {
             setLoading(true)
             try {
-                const apiResponse = await axios.get('http://localhost:8080/api/categories');
+                const apiResponse = await axios.get('http://localhost:8080/api/categories', {
+                    headers: {
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+                    }
+                });
                 setCate(apiResponse?.data)
             } catch (error) {
             }

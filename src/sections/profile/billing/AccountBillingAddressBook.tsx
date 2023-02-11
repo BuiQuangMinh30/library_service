@@ -44,7 +44,10 @@ export default function AccountBillingAddressBook({ addressBook }: Props) {
       const resApi = await axios.get("http://localhost:8080/api/orders/user-account", {
         headers: {
           "Accept": "application/json",
-          "Authorization": "Bearer " + token
+          "Authorization": "Bearer " + token,
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+
         }
       })
       setOrders(resApi.data)
@@ -57,7 +60,10 @@ export default function AccountBillingAddressBook({ addressBook }: Props) {
     const resAPI = await axios.get(`http://localhost:8080/api/orders/order-detail-user-account?orderId=${id}`, {
       headers: {
         "Accept": "application/json",
-        "Authorization": "Bearer " + token
+        "Authorization": "Bearer " + token,
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+
       }
     })
     setOrderItem(resAPI.data.books)

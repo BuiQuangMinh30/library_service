@@ -12,7 +12,12 @@ export default function BooksBread() {
         const getAPIData = async () => {
             setLoading(true)
             try {
-                const apiResponse = await axios.get(`http://localhost:8080/api/category/${id ? id : 1}`)
+                const apiResponse = await axios.get(`http://localhost:8080/api/category/${id ? id : 1}`, {
+                    headers: {
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+                    }
+                })
                 setBooks(apiResponse.data)
             } catch (error) {
                 console.log('error', error)

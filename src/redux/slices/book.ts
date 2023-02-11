@@ -236,7 +236,12 @@ export function getBook(name: string) {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get(`http://localhost:8080/api/book/${name}`);
+      const response = await axios.get(`http://localhost:8080/api/book/${name}`, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+        },
+      });
       dispatch(slice.actions.getProductSuccess(response?.data));
     } catch (error) {
       console.error(error);
