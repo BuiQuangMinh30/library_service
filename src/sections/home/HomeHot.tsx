@@ -1,5 +1,5 @@
 import { m } from 'framer-motion';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 // @mui
 import { useTheme, alpha } from '@mui/material/styles';
 import { Box, Stack, Card, Button, Container, Typography, Grid } from '@mui/material';
@@ -11,9 +11,19 @@ import Image from '../../components/image';
 import { MotionViewport, varFade } from '../../components/animate';
 
 import HomeBookNew from './listhome/HomeBookNew'
+import axios from 'axios';
 // ----------------------------------------------------------------------
 
 export default function AboutTeam() {
+    const [bookSuccess, setBookSuccess] = useState([])
+
+    useEffect(() => {
+        const data = async () => {
+            const res = await axios.get('http://localhost:8080/api/books/best-seller/top?topNumber=5');
+            setBookSuccess(res.data)
+        }
+        data();
+    }, [])
 
     return (
         <Container component={MotionViewport} sx={{ pb: 10, textAlign: 'center' }}>
@@ -44,7 +54,7 @@ export default function AboutTeam() {
 
             <Grid item xs={12}>
                 <HomeBookNew
-                    list={_bookingNew}
+                    list={bookSuccess}
                 />
             </Grid>
 

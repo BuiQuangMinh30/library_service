@@ -48,6 +48,7 @@ type Props = {
 
 export default function CheckoutBillingAddress({ onBackStep, onNextStep, onCreateBilling, checkout, accessToken }: Props) {
   const { cart, totalPrice, totalBorrow, discount, subtotalPrice, subtotalBorrow } = checkout;
+  console.log('checkout', checkout)
   const totalItems = sum(cart.map((item) => item.quantity));
   const { user } = useAuthContext();
 

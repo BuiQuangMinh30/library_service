@@ -25,32 +25,12 @@ type Props = {
 };
 
 export default function ShopProductCard({ product }: Props) {
-    // const { id, name, cover, price, colors, status, available, sizes, priceSale } = product;
     const { id, amount, author, borrowPrice, category, detail, language, price, publisher, status, subject, title,
         thumbnail } = product;
 
-    const dispatch = useDispatch();
-
-    // const linkTo = PATH_DASHBOARD.eCommerce.view(paramCase(name));
     const linkTo = PATH_PAGE.bookdetail(id);
 
-    const handleAddCart = async () => {
-        // const newProduct = {
-        //     id,
-        //     name,
-        //     cover,
-        //     available,
-        //     price,
-        //     colors: [colors[0]],
-        //     size: sizes[0],
-        //     quantity: 1,
-        // };
-        try {
-            // dispatch(addToCart(newProduct));
-        } catch (error) {
-            console.error(error);
-        }
-    };
+
 
     return (
         <Card
@@ -64,7 +44,7 @@ export default function ShopProductCard({ product }: Props) {
                 {status && (
                     <Label
                         variant="filled"
-                        color={(status === 'sale' && 'error') || 'info'}
+                        color={(status === 'HOT' && 'error') || 'info'}
                         sx={{
                             top: 16,
                             right: 16,
@@ -76,27 +56,6 @@ export default function ShopProductCard({ product }: Props) {
                         {status}
                     </Label>
                 )}
-
-                {/* <Fab
-                    color="warning"
-                    size="medium"
-                    className="add-cart-btn"
-                    onClick={handleAddCart}
-                    sx={{
-                        right: 16,
-                        bottom: 16,
-                        zIndex: 9,
-                        opacity: 0,
-                        position: 'absolute',
-                        transition: (theme) =>
-                            theme.transitions.create('all', {
-                                easing: theme.transitions.easing.easeInOut,
-                                duration: theme.transitions.duration.shorter,
-                            }),
-                    }}
-                >
-                    <Iconify icon="ic:round-add-shopping-cart" />
-                </Fab> */}
 
                 <Image alt={title} src={thumbnail} ratio="1/1" sx={{ borderRadius: 1.5 }} />
             </Box>

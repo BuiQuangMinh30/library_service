@@ -3,14 +3,14 @@ import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { Box, Card, Link, Stack, Fab } from '@mui/material';
 // routes
-import { PATH_DASHBOARD } from '../../../routes/paths';
+import { PATH_DASHBOARD, PATH_PAGE } from '../../../routes/paths';
 // utils
 import { fCurrency } from '../../../utils/formatNumber';
 // redux
 import { useDispatch } from '../../../redux/store';
 import { addToCart } from '../../../redux/slices/product';
 // @types
-import { IProduct } from '../../../@types/product';
+import { IBook } from '../../../@types/books';
 // components
 import Iconify from '../../../components/iconify';
 import Label from '../../../components/label';
@@ -20,33 +20,18 @@ import { ColorPreview } from '../../../components/color-utils';
 // ----------------------------------------------------------------------
 
 type Props = {
-    product: IProduct;
+    product: IBook;
 };
 
-export default function HomeBookCard({ product }: Props) {
-    const { id, name, cover, price, colors, status, available, sizes, priceSale } = product;
+export default function ShopProductCard({ product }: Props) {
+    // const { id, name, cover, price, colors, status, available, sizes, priceSale } = product;
+    const { id, amount, author, borrowPrice, category, detail, language, price, publisher, status, subject, title,
+        thumbnail } = product;
 
     const dispatch = useDispatch();
 
-    const linkTo = PATH_DASHBOARD.eCommerce.view(paramCase(name));
-
-    const handleAddCart = async () => {
-        const newProduct = {
-            id,
-            name,
-            cover,
-            available,
-            price,
-            colors: [colors[0]],
-            size: sizes[0],
-            quantity: 1,
-        };
-        try {
-            dispatch(addToCart(newProduct));
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    // const linkTo = PATH_DASHBOARD.eCommerce.view(paramCase(name));
+    const linkTo = PATH_PAGE.bookdetail(id);
 
     return (
         <Card
@@ -60,7 +45,7 @@ export default function HomeBookCard({ product }: Props) {
                 {status && (
                     <Label
                         variant="filled"
-                        color={(status === 'sale' && 'error') || 'info'}
+                        color={(status === 'sale' && 'error') || 'error'}
                         sx={{
                             top: 16,
                             right: 16,
@@ -73,45 +58,25 @@ export default function HomeBookCard({ product }: Props) {
                     </Label>
                 )}
 
-                <Fab
-                    color="warning"
-                    size="medium"
-                    className="add-cart-btn"
-                    onClick={handleAddCart}
-                    sx={{
-                        right: 16,
-                        bottom: 16,
-                        zIndex: 9,
-                        opacity: 0,
-                        position: 'absolute',
-                        transition: (theme) =>
-                            theme.transitions.create('all', {
-                                easing: theme.transitions.easing.easeInOut,
-                                duration: theme.transitions.duration.shorter,
-                            }),
-                    }}
-                >
-                    <Iconify icon="ic:round-add-shopping-cart" />
-                </Fab>
-
-                <Image alt={name} src={cover} ratio="1/1" sx={{ borderRadius: 1.5 }} />
+                <Image alt={title} src={thumbnail} ratio="1/1" sx={{ borderRadius: 1.5 }} />
             </Box>
 
             <Stack spacing={2.5} sx={{ p: 3 }}>
                 <Link to={linkTo} component={RouterLink} color="inherit" variant="subtitle2" noWrap>
-                    {name}
+                    {title}
                 </Link>
 
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
 
                     <Stack direction="row" spacing={0.5} sx={{ typography: 'subtitle1' }}>
-                        {priceSale && (
+                        <Box component="span">{fCurrency(price)}đ -</Box>
+                        {borrowPrice && (
                             <Box component="span" sx={{ color: 'text.disabled', textDecoration: 'line-through' }}>
-                                {fCurrency(priceSale)}
+                                {fCurrency(borrowPrice)}đ
                             </Box>
                         )}
 
-                        <Box component="span">{fCurrency(price)}</Box>
+
                     </Stack>
                 </Stack>
             </Stack>

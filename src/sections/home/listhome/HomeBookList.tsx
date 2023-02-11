@@ -2,15 +2,17 @@
 import { Box, BoxProps } from '@mui/material';
 // @type
 import { IProduct } from '../../../@types/product';
+import { IBook } from '../../../@types/books';
 // components
 import { SkeletonProductItem } from '../../../components/skeleton';
 //
 import HomeBookCard from './HomeBookCard';
+import product from 'src/redux/slices/product';
 
 // ----------------------------------------------------------------------
 
 interface Props extends BoxProps {
-    products: IProduct[];
+    products: IBook[];
     loading: boolean;
 }
 
@@ -28,10 +30,11 @@ export default function HomeBookList({ products, loading, ...other }: Props) {
             {...other}
         >
             {(loading ? [...Array(12)] : products).map((product, index) =>
-                product ? (
+                product && product.status == "HOT" ? (
                     <HomeBookCard key={product.id} product={product} />
                 ) : (
-                    <SkeletonProductItem key={index} />
+                    // <SkeletonProductItem key={index} />
+                    ""
                 )
             )}
         </Box>

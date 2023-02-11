@@ -1,62 +1,27 @@
 import { m } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import { Container, Tab, Tabs, Box, Typography } from '@mui/material';
-// routes
-import { PATH_DASHBOARD } from '../../routes/paths';
 // _mock_
 import { _userPayment, _userAddressBook, _userInvoices, _userAbout } from '../../_mock/arrays';
-// components
-import Iconify from '../../components/iconify';
-import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
-import { useSettingsContext } from '../../components/settings';
-// sections
-import {
-    AccountGeneral,
-    AccountBilling,
-    AccountSocialLinks,
-    AccountNotifications,
-    AccountChangePassword,
-} from '../../sections/@dashboard/user/account';
 
 import HomLists from './listhome/HomeLists'
 
 import { MotionViewport, varFade } from '../../components/animate';
+import axios from 'axios';
 // ----------------------------------------------------------------------
 
 export default function HomeList() {
-    const { themeStretch } = useSettingsContext();
+    const [bookSuccess, setBookSuccess] = useState([])
 
-    const [currentTab, setCurrentTab] = useState('general');
-
-    const TABS = [
-        {
-            value: 'general',
-            label: 'Sách thiếu nhi',
-            icon: <Iconify icon="ic:round-account-box" />,
-            component: <AccountGeneral />,
-        },
-        {
-            value: 'billing',
-            label: 'Sách trinh thám',
-            icon: <Iconify icon="ic:round-receipt" />,
-            component: (
-                <AccountBilling
-                    cards={_userPayment}
-                    addressBook={_userAddressBook}
-                    invoices={_userInvoices}
-                />
-            ),
-        },
-        {
-            value: 'social_links',
-            label: 'Truyện ngắn',
-            icon: <Iconify icon="eva:share-fill" />,
-            component: <AccountSocialLinks socialLinks={_userAbout.socialLinks} />,
-        },
-
-    ];
-
+    useEffect(() => {
+        const data = async () => {
+            const res = await axios.get('http://localhost:8080/api/books');
+            console.log(res);
+            setBookSuccess(res.data)
+        }
+        data();
+    }, [])
     return (
         <>
             <Container component={MotionViewport} sx={{ pb: 10, textAlign: 'center' }}>
@@ -83,7 +48,7 @@ export default function HomeList() {
                 </Box>
 
 
-                <HomLists />
+                <HomLists data={bookSuccess} />
             </Container>
 
         </>

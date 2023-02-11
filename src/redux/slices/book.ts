@@ -82,6 +82,7 @@ const slice = createSlice({
     },
 
     addToCart(state, action) {
+      console.log('action', action);
       current(state);
       const newProduct = action.payload;
       const isEmptyCart = !state.checkout.cart.length;
@@ -90,12 +91,15 @@ const slice = createSlice({
         state.checkout.cart = [...current(state.checkout.cart), newProduct];
       } else {
         state.checkout.cart = current(state.checkout.cart).map((product) => {
+          console.log('product', product);
           const isExisted = product.id === newProduct.id;
           if (isExisted) {
             return {
               ...product,
               quantity: product.quantity + 1,
             };
+          }
+          if (product.quantity >= 0) {
           }
 
           return product;

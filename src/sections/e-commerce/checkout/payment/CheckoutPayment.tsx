@@ -133,7 +133,6 @@ export default function CheckoutPayment({
           "Authorization": "Bearer " + accessToken
         }
       });
-
       if (data1.status == 200) {
         if (cart.length > 0) {
           for (var i = 0; i < cart.length; i++) {
@@ -148,6 +147,7 @@ export default function CheckoutPayment({
                 "Authorization": "Bearer " + accessToken
               }
             })
+            console.log('dta', data11)
             if (data11.data == "Store doesn't have enough book! Please decrease your Borrow Book!") {
               enqueueSnackbar(`${data11.data}`, { variant: 'error' });
             } else {
@@ -166,9 +166,11 @@ export default function CheckoutPayment({
           }
         }
 
+      } else if (data1.status == 400) {
+        enqueueSnackbar(`Số lượng sách không đủ để thuê`, { variant: 'error' });
       }
     } catch (error) {
-      console.error(error);
+      enqueueSnackbar(`Lỗi`, { variant: 'error' });
     }
   };
 

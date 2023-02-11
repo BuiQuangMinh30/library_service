@@ -70,18 +70,6 @@ export default function CheckoutBillingNewAddressForm({ open, onClose, onCreateB
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
-  // await axios.post('http://localhost:8080/api/orders/add?userId=6', {
-  //   fullname: "Minh",
-  //   email: "minh@gmail.com",
-  //   phoneNumber: "09999999",
-  //   address: "Ha Noi",
-  //   totalDeposit: subtotalPrice,
-  //   totalRent: subtotalBorrow
-  // }, {
-  //   headers: {
-  //     "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNaW5oIiwicm9sZXMiOlsiQURNSU4iXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2FwaS9sb2dpbiIsImV4cCI6MTY3MzQyODUwNH0.v1bU0KpdqggvS4mXUhv02KyoGB6Ae0xfgwMAWWcEils"
-  //   }
-  // })
   const onSubmit = async (data: FormValuesProps) => {
     try {
 

@@ -95,8 +95,6 @@ export default function EcommerceProductDetailsPage() {
                     ]}
                 />
 
-                {/* <CartWidget totalItems={checkout.totalItems} /> */}
-
                 {product && (
                     <>
                         <Grid container spacing={3}>
@@ -148,40 +146,9 @@ export default function EcommerceProductDetailsPage() {
                                 </Box>
                             ))}
                         </Box>
-
-                        {/* <Card>
-                            <Tabs
-                                value={currentTab}
-                                onChange={(event, newValue) => setCurrentTab(newValue)}
-                                sx={{ px: 3, bgcolor: 'background.neutral' }}
-                            >
-                                {TABS.map((tab) => (
-                                    <Tab key={tab.value} value={tab.value} label={tab.label} />
-                                ))}
-                            </Tabs>
-
-                            <Divider />
-
-                            {TABS.map(
-                                (tab) =>
-                                    tab.value === currentTab && (
-                                        <Box
-                                            key={tab.value}
-                                            sx={{
-                                                ...(currentTab === 'description' && {
-                                                    p: 3,
-                                                }),
-                                            }}
-                                        >
-                                            {tab.component}
-                                        </Box>
-                                    )
-                            )}
-                        </Card> */}
                     </>
                 )}
 
-                {/* {isLoading && <SkeletonProductDetails />} */}
             </Container>
         </>
     );

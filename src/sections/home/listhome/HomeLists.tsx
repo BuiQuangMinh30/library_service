@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 // form
 import { useForm } from 'react-hook-form';
 // @mui
-import { Container } from '@mui/material';
+import { BoxProps, Container } from '@mui/material';
 // redux
 import { useDispatch, useSelector } from '../../../redux/store';
 import { getProducts } from '../../../redux/slices/product';
@@ -13,13 +13,16 @@ import FormProvider from '../../../components/hook-form';
 import { useSettingsContext } from '../../../components/settings';
 // sections
 import HomeBookList from './HomeBookList';
-
+import { IBook } from '../../../@types/books';
 // ----------------------------------------------------------------------
-
-export default function EcommerceShopPage() {
+interface Props extends BoxProps {
+    data: IBook[]
+}
+export default function EcommerceShopPage({ data }: Props) {
     const { themeStretch } = useSettingsContext();
 
     const dispatch = useDispatch();
+
 
     const { products, checkout } = useSelector((state) => state.product);
 
@@ -77,9 +80,7 @@ export default function EcommerceShopPage() {
 
             <FormProvider methods={methods}>
                 <Container maxWidth={themeStretch ? false : 'lg'}>
-                    <HomeBookList products={products} loading={!products.length && isDefault} />
-
-                    {/* <CartWidget totalItems={checkout.totalItems} /> */}
+                    <HomeBookList products={data} loading={!data.length && isDefault} />
                 </Container>
             </FormProvider>
         </>

@@ -1,15 +1,19 @@
 import { useRef } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Box, Stack, Paper, Avatar, BoxProps, Typography, CardHeader } from '@mui/material';
+import { Box, Stack, Paper, Avatar, BoxProps, Typography, CardHeader, Card, Link } from '@mui/material';
+// routes
+import { PATH_DASHBOARD, PATH_PAGE } from '../../../routes/paths';
 // utils
+import { fCurrency } from '../../../utils/formatNumber';
 import { fDateTime } from '../../../utils/formatTime';
 // components
 import Label from '../../../components/label';
 import Image from '../../../components/image';
 import Iconify from '../../../components/iconify';
 import Carousel, { CarouselArrows } from '../../../components/carousel';
-
+import { IBook } from '../../../@types/books';
 // ----------------------------------------------------------------------
 
 type ItemProps = {
@@ -26,7 +30,7 @@ type ItemProps = {
 interface Props extends BoxProps {
     title?: string;
     subheader?: string;
-    list: ItemProps[];
+    list: IBook[];
 }
 
 export default function BookingNewestBooking({ title, subheader, list, sx, ...other }: Props) {
@@ -95,60 +99,65 @@ export default function BookingNewestBooking({ title, subheader, list, sx, ...ot
 // ----------------------------------------------------------------------
 
 type BookingItemProps = {
-    item: ItemProps;
+    item: IBook;
 };
 
 function BookingItem({ item }: BookingItemProps) {
-    const { avatar, name, roomNumber, bookdAt, person, cover, roomType } = item;
+    const { id, amount, author, borrowPrice, category, detail, language, price, publisher, status, subject, title,
+        thumbnail } = item;
+    const linkTo = PATH_PAGE.bookdetail(id);
 
     return (
         <Paper sx={{ mx: 1.5, borderRadius: 2, bgcolor: 'background.neutral' }}>
 
 
-            <Box sx={{ p: 1, position: 'relative' }}>
-                {/* <Label
-                    variant="filled"
-                    color={(roomType === 'king' && 'error') || (roomType === 'double' && 'info') || 'warning'}
-                    sx={{
-                        right: 16,
-                        zIndex: 9,
-                        bottom: 16,
-                        position: 'absolute',
-                    }}
-                >
-                    {roomType}
-                </Label> */}
+            <Card
+                sx={{
+                    '&:hover .add-cart-btn': {
+                        opacity: 1,
+                    },
+                }}
+            >
+                <Box sx={{ position: 'relative', p: 1 }}>
+                    {status && (
+                        <Label
+                            variant="filled"
+                            color={(status === 'sale' && 'error') || 'info'}
+                            sx={{
+                                top: 16,
+                                right: 16,
+                                zIndex: 9,
+                                position: 'absolute',
+                                textTransform: 'uppercase',
+                            }}
+                        >
+                            {status}
+                        </Label>
+                    )}
 
-                <Image alt="cover" src={cover} ratio="1/1" sx={{ borderRadius: 1.5 }} />
-            </Box>
-            <Stack spacing={2.5} sx={{ p: 3, pb: 2.5 }}>
+                    <Image alt={title} src={thumbnail} ratio="1/1" sx={{ borderRadius: 1.5 }} />
+                </Box>
+
+                <Stack spacing={2.5} sx={{ p: 3 }}>
+                    <Link to={linkTo} component={RouterLink} color="inherit" variant="subtitle2" noWrap>
+                        {title}
+                    </Link>
+
+                    <Stack direction="row" alignItems="center" justifyContent="space-between">
+
+                        <Stack direction="row" spacing={0.5} sx={{ typography: 'subtitle1' }}>
+                            <Box component="span">{fCurrency(price)}đ -</Box>
+                            {borrowPrice && (
+                                <Box component="span" sx={{ color: 'text.disabled', textDecoration: 'line-through' }}>
+                                    {fCurrency(borrowPrice)}đ
+                                </Box>
+                            )}
 
 
-                <Stack direction="row" alignItems="center" spacing={3} sx={{ color: 'text.secondary' }}>
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                        <Iconify icon="ic:round-vpn-key" width={16} />
-                        <Typography variant="caption">Room {roomNumber}</Typography>
-                    </Stack>
-
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                        <Iconify icon="eva:people-fill" width={16} />
-                        <Typography variant="caption">{person} Person</Typography>
+                        </Stack>
                     </Stack>
                 </Stack>
-                {/* <Stack direction="row" alignItems="center" spacing={2}>
-
-                    <div>
-                        <Typography variant="subtitle2">{name}</Typography>
-
-                        <Typography
-                            variant="caption"
-                            sx={{ color: 'text.disabled', mt: 0.5, display: 'block' }}
-                        >
-                            {fDateTime(bookdAt)}
-                        </Typography>
-                    </div>
-                </Stack> */}
-            </Stack>
+            </Card>
         </Paper>
     );
 }

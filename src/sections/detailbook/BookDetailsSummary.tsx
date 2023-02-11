@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 // form
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from '../../redux/store';
-import { getBook, addToCart, gotoStep } from '../../redux/slices/book';
+import { getBook, addToCart, gotoStep, decreaseQuantity } from '../../redux/slices/book';
 // @mui
 import { Box, Link, Stack, Button, Rating, Divider, Typography, IconButton } from '@mui/material';
 // routes
@@ -53,7 +53,8 @@ export default function ProductDetailsSummary({
     tomorrow.setDate(now.getDate() + 1);
     const [edit_check_date, set_edit_check_date] = useState<Date | null>(new Date());
     const [edit_return_date, set_edit_return_date] = useState<Date | null>(tomorrow);
-    const [countDate1, setCountDate] = useState<number>()
+    const [countDate1, setCountDate] = useState<number>();
+    const [countQuan, setCountQuan] = useState<number>();
 
     let dateBorrow1: any = moment(edit_check_date).format("MM/DD/YYYY");
     let dateReturn1: any = moment(edit_return_date).format("MM/DD/YYYY");
@@ -85,7 +86,7 @@ export default function ProductDetailsSummary({
         countDate: countDate1,
         borrow_At: dateBorrow1,
         return_At: dateReturn1,
-        quantity: amount < 1 ? 0 : 1,
+        quantity: amount <= 1 ? 0 : 1,
     };
 
     const methods = useForm<ICheckoutCartItem>({
@@ -107,6 +108,7 @@ export default function ProductDetailsSummary({
             // if (!alreadyProduct) {
             onAddCart({
                 ...data,
+                count: (amount - 1),
                 quantity: data.quantity,
                 countDate: countDate1,
                 borrow_At: dateBorrow1,
@@ -115,6 +117,8 @@ export default function ProductDetailsSummary({
                 subtotalPrice: data.price * data.quantity * data.countDate * (countDate1 ? countDate1 : 0),
             });
             enqueueSnackbar(`Thêm thành công`);
+            // setCountQuan()
+            // window.location.reload();
         } catch (error) {
         }
     };
@@ -215,11 +219,12 @@ export default function ProductDetailsSummary({
                     <Stack spacing={1}>
                         <IncrementerButton
                             name="quantity"
-                            quantity={values.quantity}
+                            quantity={values.quantity < 1 ? 0 : values.quantity}
                             disabledDecrease={values.quantity <= 1}
-                            disabledIncrease={values.quantity >= amount}
+                            disabledIncrease={values.quantity >= amount - 1}
                             onIncrease={() => setValue('quantity', values.quantity + 1)}
                             onDecrease={() => setValue('quantity', values.quantity - 1)}
+
                         />
 
                         <Typography
@@ -227,7 +232,7 @@ export default function ProductDetailsSummary({
                             component="div"
                             sx={{ textAlign: 'right', color: 'text.secondary' }}
                         >
-                            Có sẵn: {amount}
+                            Có sẵn: {amount - 1}
                         </Typography>
                     </Stack>
                 </Stack>
@@ -235,18 +240,30 @@ export default function ProductDetailsSummary({
                 <Divider sx={{ borderStyle: 'dashed' }} />
 
                 <Stack direction="row" spacing={2}>
-                    <Button fullWidth size="large" type="submit" variant="contained">
-                        Thuê ngay
-                    </Button>
+                    {
+                        amount >= 1 ?
+                            (
+                                <Button fullWidth size="large" type="submit" variant="contained">
+                                    Thue Ngay
+                                </Button>
+                            )
+                            :
+                            (
+                                <Button disabled fullWidth size="large" type="submit" variant="contained">
+                                    Sach da het
+                                </Button>)
+
+                    }
+
                 </Stack>
 
-                <Stack direction="row" alignItems="center" justifyContent="center">
+                {/* <Stack direction="row" alignItems="center" justifyContent="center">
                     {_socials.map((social) => (
                         <IconButton key={social.name}>
                             <Iconify icon={social.icon} />
                         </IconButton>
                     ))}
-                </Stack>
+                </Stack> */}
             </Stack>
         </FormProvider>
     );
