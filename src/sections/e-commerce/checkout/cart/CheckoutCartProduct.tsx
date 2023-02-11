@@ -30,7 +30,7 @@ export default function CheckoutCartProduct({
   onDecrease,
   onIncrease,
 }: CheckoutProductListRowProps) {
-  const { detail, borrowPrice, price, id, quantity, available, borrow_At, return_At, subtotalPrice, subtotalBorrow, countDate } = row;
+  const { detail, borrowPrice, price, id, quantity, available, borrow_At, return_At, subtotalPrice, subtotalBorrow, countDate, count } = row;
   const now = new Date();
   const [edit_check_date, set_edit_check_date] = useState<any | null>(new Date(borrow_At));
   const [edit_return_date, set_edit_return_date] = useState<any | null>(new Date(return_At));
@@ -53,7 +53,7 @@ export default function CheckoutCartProduct({
             onDecrease={onDecrease}
             onIncrease={onIncrease}
             disabledDecrease={quantity <= 1}
-            disabledIncrease={quantity >= available}
+            disabledIncrease={quantity >= count}
           />
         </Box>
       </TableCell>

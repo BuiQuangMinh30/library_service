@@ -47,6 +47,7 @@ export type ICheckoutCartItem = {
   detail: string;
   available: number;
   price: number;
+  count: number;
   borrowPrice: number;
   quantity: number;
   subtotalBorrow: number;

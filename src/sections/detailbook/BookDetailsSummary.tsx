@@ -241,7 +241,7 @@ export default function ProductDetailsSummary({
 
                 <Stack direction="row" spacing={2}>
                     {
-                        amount >= 1 ?
+                        amount > 1 ?
                             (
                                 <Button fullWidth size="large" type="submit" variant="contained">
                                     Thue Ngay
