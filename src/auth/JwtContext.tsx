@@ -95,7 +95,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
-        const response = await axios.get('/api/user/profile', { headers: { Authorization: 'Bearer ' + accessToken } });
+        const response = await axios.get('http://localhost:8080/api/user/profile', { headers: { Authorization: 'Bearer ' + accessToken } });
         dispatch({
           type: Types.INITIAL,
           payload: {
@@ -131,7 +131,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // LOGIN
   const login = async (username: string, password: string) => {
 
-    const response = await axios.post('api/login', {
+    const response = await axios.post('http://localhost:8080/api/login', {
       username,
       password,
     }, { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
@@ -151,7 +151,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // REGISTER
   const register = async (email: string, password: string, name: string, username: string) => {
 
-    const response = await axios.post('/api/user/save', {
+    const response = await axios.post('http://localhost:8080/api/user/save', {
       email,
       password,
       name,
@@ -179,10 +179,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 
   const resetPassword = async (email: String) => {
-    await axios.post('/api/user/resetPassword', { email });
+    await axios.post('http://localhost:8080/api/user/resetPassword', { email });
   }
   const newPassword = async (password: string, token: string) => {
-    await axios.post('/api/user/savePassword?token=' + token, { newPassword: password });
+    await axios.post('http://localhost:8080/api/user/savePassword?token=' + token, { newPassword: password });
   }
 
   return (
