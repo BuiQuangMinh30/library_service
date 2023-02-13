@@ -14,8 +14,8 @@ export default function BooksBread() {
             try {
                 const apiResponse = await axios.get(`http://localhost:8080/api/category/${id ? id : 1}`, {
                     headers: {
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+                        //     "Access-Control-Allow-Origin": "*",
+                        //     "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
                     }
                 })
                 setBooks(apiResponse.data)

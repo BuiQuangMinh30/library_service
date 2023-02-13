@@ -114,7 +114,7 @@ export default function ProductDetailsSummary({
                 borrow_At: dateBorrow1,
                 return_At: dateReturn1,
                 subtotalBorrow: data.borrowPrice * data.quantity * data.countDate * (countDate1 ? countDate1 : 0),
-                subtotalPrice: data.price * data.quantity * data.countDate * (countDate1 ? countDate1 : 0),
+                subtotalPrice: data.price * data.quantity,
             });
             enqueueSnackbar(`Thêm thành công`);
             // setCountQuan()

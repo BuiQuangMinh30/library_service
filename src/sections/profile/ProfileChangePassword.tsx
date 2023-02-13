@@ -56,8 +56,8 @@ export default function AccountChangePassword({ profile_email }: any) {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: "Bearer " + token,
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+                    // "Access-Control-Allow-Origin": "*",
+                    // "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
                 }
             })
 

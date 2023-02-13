@@ -42,8 +42,8 @@ export default function BookPostsPage() {
             try {
                 const apiResponse = await axios.get(`http://localhost:8080/api/books/category/${id ? id : 1}`, {
                     headers: {
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+                        //     "Access-Control-Allow-Origin": "*",
+                        //     "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
                     }
                 })
                 setBooks(apiResponse.data)

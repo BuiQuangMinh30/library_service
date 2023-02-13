@@ -64,9 +64,7 @@ const slice = createSlice({
       const cart: ICheckoutCartItem[] = action.payload;
 
       const totalItems = sum(cart.map((product) => product.quantity));
-      const subtotalPrice = sum(
-        cart.map((product) => product.price * product.quantity * product.countDate)
-      );
+      const subtotalPrice = sum(cart.map((product) => product.price * product.quantity));
       const subtotalBorrow = sum(
         cart.map((product) => product.borrowPrice * product.quantity * product.countDate)
       );
@@ -237,10 +235,10 @@ export function getBook(name: string) {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get(`http://localhost:8080/api/book/${name}`, {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-        },
+        // headers: {
+        //   'Access-Control-Allow-Origin': '*',
+        //   'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+        // },
       });
       dispatch(slice.actions.getProductSuccess(response?.data));
     } catch (error) {

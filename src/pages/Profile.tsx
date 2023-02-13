@@ -48,8 +48,8 @@ export default function UserProfilePage() {
         fetch("http://localhost:8080/api/user/profile", {
             headers: {
                 "Authorization": "Bearer " + token,
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+                // "Access-Control-Allow-Origin": "*",
+                // "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
             }
 
         }).then(results => results.json())
