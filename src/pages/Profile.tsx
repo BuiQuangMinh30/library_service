@@ -41,7 +41,6 @@ export default function UserProfilePage() {
     const { themeStretch } = useSettingsContext();
     const token = localStorage.getItem("access_Token")
     const [profile, setProfile] = useState<Object | any>({});
-    console.log(profile)
     const [loading, setLoading] = useState(false);
     useEffect(() => {
         setLoading(true)

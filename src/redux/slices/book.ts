@@ -80,7 +80,6 @@ const slice = createSlice({
     },
 
     addToCart(state, action) {
-      console.log('action', action);
       current(state);
       const newProduct = action.payload;
       const isEmptyCart = !state.checkout.cart.length;
@@ -89,7 +88,6 @@ const slice = createSlice({
         state.checkout.cart = [...current(state.checkout.cart), newProduct];
       } else {
         state.checkout.cart = current(state.checkout.cart).map((product) => {
-          console.log('product', product);
           const isExisted = product.id === newProduct.id;
           if (isExisted && product.count > product.quantity) {
             return {
@@ -97,15 +95,10 @@ const slice = createSlice({
               quantity: product.quantity + 1,
             };
           }
-          // if (quantity >= 0) {
-          // }
-
+        
           return product;
         });
       }
-      // state.checkout.cart = uniqBy([...state.checkout.cart, newProduct], function (ele) {
-      //   return [ele.borrow_At, ele.return_At].join();
-      // });
       state.checkout.cart = uniqBy([...state.checkout.cart, newProduct], 'id');
       state.checkout.totalItems = sum(state.checkout.cart.map((product) => product.quantity));
     },

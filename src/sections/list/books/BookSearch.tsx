@@ -29,25 +29,6 @@ export default function ShopProductSearch({ books }: Props) {
     const [searchProducts, setSearchProducts] = useState('');
 
     const [searchResults, setSearchResults] = useState<any | undefined>(books);
-
-    // http://localhost:8080/api/books/cateID-search?cateID=8&keyword=gold
-    // const handleChangeSearch = async (value: string) => {
-    //     try {
-    //         setSearchProducts(value);
-    //         if (value) {
-    //             const response = await axios.get(`http://localhost:8080/api/books/cateID-search?cateID=${id}&keyword=${value}`, {
-    //                 headers: { 'Content-Type': 'application/json' },
-    //             });
-    //             console.log('response', response)
-
-    //             setSearchResults(response.data.results);
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // };
-    console.log('books', books)
-
     const [filteredList, setFilteredList] = useState<any | undefined>(books);
 
     const handleChangeSearch = (event: any) => {

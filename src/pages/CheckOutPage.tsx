@@ -50,7 +50,6 @@ export default function EcommerceCheckoutPage() {
     const dispatch = useDispatch();
 
     const { checkout } = useSelector((state) => state.book);
-    console.log('checkout', checkout);
 
     const { cart, billing, activeStep } = checkout;
 
