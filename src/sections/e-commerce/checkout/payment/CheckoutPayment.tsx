@@ -131,8 +131,6 @@ export default function CheckoutPayment({
         }, {
         headers: {
           "Authorization": "Bearer " + accessToken,
-          // "Access-Control-Allow-Origin": "*",
-          // "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
         }
 
       });
@@ -148,8 +146,6 @@ export default function CheckoutPayment({
             }, {
               headers: {
                 "Authorization": "Bearer " + accessToken,
-                // "Access-Control-Allow-Origin": "*",
-                // "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
               }
             })
             console.log('dta', data11)
@@ -159,8 +155,6 @@ export default function CheckoutPayment({
               const data = await axios.get(`http://localhost:8080/api/orders/checkout-success?orderID=${data1.data.orderId}`, {
                 headers: {
                   "Authorization": "Bearer " + accessToken,
-                  // "Access-Control-Allow-Origin": "*",
-                  // "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
                 }
               })
 
